@@ -3,29 +3,21 @@
 	This version of the class is abstract. This is in order to
 		- prevent BookStoreItem objects from being created. Instead, only
 		  Book, CD and Tape objects can be created
-		- require all subclasses to provide certain methods (the compiler requires
-		  all subclasses to override any abstract methods that they inherit
-		  from this class
 	Author: James Hembree
-	E-mail address: jhembree0023@kctcs.edu
-	Last changed: February 19, 2020
-	Lab 01
+	E-mail address: jshembree88@gmail.com
+	Last changed: April 24, 2020
 */
+import java.io.Serializable;
 import java.text.NumberFormat;
 
-public abstract class BookStoreItem {
+public abstract class BookStoreItem implements Serializable {
 	
 	protected String title;
 	protected String author;
 	protected double price;
 	
-	/*
-	* The constructor
-	* Contains code that initially sets up each Book object when it is
-	* first created. Always has the same name as the class.
-	*/
+	
 	public BookStoreItem (String title, String author, double price) {
-		//call the mutator methods and let them initialize the instance variables
 		setTitle(title);
 		setAuthor(author);
 		setPrice(price);
@@ -36,10 +28,7 @@ public abstract class BookStoreItem {
 		this("title", "author", 0.0);
 	}
 	
-	/*
-	* The accessor methods
-	* These report the current values of the Book object's instance variables
-	*/
+	
 	public String getTitle() {
 		return this.title;
 	}
@@ -52,10 +41,7 @@ public abstract class BookStoreItem {
 		return this.price;
 	}
 	
-	/*
-	* The mutator methods
-	* These allow the Book object's instance variables to be assigned new values
-	*/
+	
 	public void setTitle(String title) {
 		
 		//trim the title parameter to remove any white space at the ends of the
@@ -77,8 +63,6 @@ public abstract class BookStoreItem {
 			this.price = price;
 		}
 	}
-	
-	public abstract String getSize();
 	
 	/*
 	* method toString() returns a String representation of this Book object
