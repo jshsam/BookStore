@@ -7,13 +7,12 @@
 		- load Catalog inventory
 		
 	Author: James Hembree
-	E-mail address: jhembree0023@kctcs.edu
-	Last changed: February 19, 2020
-	Lab 01
+	E-mail address: jshembree88@gmail.com
+	Last changed: April 24, 2020
 */
 
 import java.io.*;
-import java.util.Scanner;
+import java.lang.ClassNotFoundException;
 
 public class Catalog {
 	
@@ -68,78 +67,67 @@ public class Catalog {
 		return inventory;
 	}
 
-	public void save() throws IOException {
-		PrintWriter out = null;
+	public void save(File file) throws FileNotFoundException, IOException {
+		ObjectOutputStream outputStream;
 
-		out = new PrintWriter(new BufferedWriter(new FileWriter("catalog.txt")));
+		outputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+
+		outputStream.writeInt(count);
 
 		for (int i = 0;i < count;i++) {
 			if (inventory[i] instanceof Book) {
-				out.println(BOOK_INT + ";" + inventory[i].getTitle() + ";" + inventory[i].getAuthor() + ";" +
-								inventory[i].getPrice());
+				outputStream.writeInt(BOOK_INT);
+				outputStream.writeObject(inventory[i]);
 			}
 			else if (inventory[i] instanceof CD) {
-				out.println(CD_INT + ";" + inventory[i].getTitle() + ";" + inventory[i].getAuthor() + ";" +
-								inventory[i].getPrice());
+				outputStream.writeInt(CD_INT);
+				outputStream.writeObject(inventory[i]);
 			}
 			else if (inventory[i] instanceof DVD) {
-				out.println(DVD_INT + ";" + inventory[i].getTitle() + ";" + inventory[i].getAuthor() + ";" +
-								inventory[i].getPrice());
+				outputStream.writeInt(DVD_INT);
+				outputStream.writeObject(inventory[i]);
 			}
 		}
-	
-		out.close();
+		if (outputStream != null) {
+			outputStream.close();
+		}
 	}
 
-	public void load() throws FileNotFoundException {
-		Scanner fileScanner;
-		File catalogFile;
-		String line;
+	public void load(File file) throws ClassNotFoundException, FileNotFoundException, IOException {
+		ObjectInputStream inputStream;
+		Object nextObject;
 		int itemType;
-		BookStoreItem newItem;
-		String[] obj;
-		double price;
-		int size1;
-		int size2;
 
-		newItem = null;
-		fileScanner = null;
-		catalogFile = new File("catalog.txt");
+		for (int i = 0;i < inventory.length;i++) {
+			inventory[i] = null;
+		}
 
-		if (catalogFile.exists()) {
-			fileScanner = new Scanner(catalogFile);
-			count = 0;
+		inputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 
-			while (fileScanner.hasNextLine()) {
-				line = fileScanner.nextLine();
-				
-				obj = line.split(";");
+		if (file.exists()) {
+			count = inputStream.readInt();
 
-				itemType = Integer.parseInt(obj[0]);
-				price = Double.parseDouble(obj[3]);
+			for (int i = 0;i < count;i++) {
+
+				itemType = inputStream.readInt();
+				nextObject = inputStream.readObject();
 
 				switch (itemType) {
-					case 0:
-						newItem = new Book(obj[1], obj[2], price);
+					case BOOK_INT:
+						inventory[i] = (Book)nextObject;
 						break;
-					case 1:
-						newItem = new CD(obj[1], obj[2], price);
+					case CD_INT:
+						inventory[i] = (CD)nextObject;
 						break;
-					case 2:
-						newItem = new DVD(obj[1], obj[2], price);
+					case DVD_INT:
+						inventory[i] = (DVD)nextObject;
 						break;
 				}
-				
-				add(newItem);
-				
 			}
 		}
 	
-		if (fileScanner != null) {
-			fileScanner.close();
+		if (inputStream != null) {
+			inputStream.close();
 		}
-
-	}
-	
-}
-		
+	}	
+}		
